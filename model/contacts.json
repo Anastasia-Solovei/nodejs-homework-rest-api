@@ -60,14 +60,27 @@
     "phone": "(748) 206-2688"
   },
   {
-    "id": "cef2d8fd-986d-491f-b208-b1b5a63ac736",
+    "id": "bf2f2937-3183-4717-b304-3cebba5eb978",
     "name": "Anastasia",
-    "phone": "555-666-888"
+    "phone": "068 555-6688",
+    "email": "anastasia@gmail.com"
   },
   {
-    "id": "2b9426c0-6a73-47f9-8dc5-e5bd73a37318",
-    "name": "Sasha",
-    "phone": "532-83-03",
-    "email": "sasha@mail.com"
+    "id": "89aa3e8d-9992-44ae-9686-c25ef4fc5e75",
+    "name": "Anastasia",
+    "phone": "068 555-6688",
+    "email": "anastasia@gmail.com"
+  },
+  {
+    "id": "201f1ba4-87de-4558-9ce4-c714947c3d4b",
+    "name": "Anastasia",
+    "phone": "067 555-6688",
+    "email": "nastya@gmail.com"
+  },
+  {
+    "id": "1e55e268-f67c-4160-90c9-50476426571e",
+    "name": "Boom",
+    "phone": "065 565-6698",
+    "email": "boom@mail.com"
   }
 ]
