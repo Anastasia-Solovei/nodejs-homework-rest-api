@@ -63,12 +63,6 @@ const addContact = async (req, res, next) => {
         newContact,
       },
     });
-
-    // res.json({
-    //     status: "error",
-    //     code: 400,
-    //     "message": "missing required name field"
-    //   });
   } catch (error) {
     next(error);
   }
@@ -108,28 +102,20 @@ const updateContact = async (req, res, next) => {
     const { contactId } = req.params;
     const contacts = await db.read();
 
-    if (body) {
-      const index = contacts.findIndex((contact) => contact.id === contactId);
-      if (index !== -1) {
-        const contact = contacts[index];
-        contacts[index] = { ...contact, ...body };
-        await db.write(contacts);
-        const updatedContact = contacts[index];
+    const index = contacts.findIndex((contact) => contact.id === contactId);
+    if (index !== -1) {
+      const contact = contacts[index];
+      contacts[index] = { ...contact, ...body };
+      await db.write(contacts);
+      const updatedContact = contacts[index];
 
-        return res.json({
-          status: "success",
-          code: 200,
-          data: {
-            updatedContact,
-          },
-        });
-      } else {
-        return res.json({
-          status: "error",
-          code: 404,
-          message: "Not found!",
-        });
-      }
+      return res.json({
+        status: "success",
+        code: 200,
+        data: {
+          updatedContact,
+        },
+      });
     }
 
     return res.json({
