@@ -33,7 +33,7 @@ const getContactById = async (req, res, next) => {
         },
       });
     }
-    return res.json({
+    return res.status(404).json({
       status: "error",
       code: 404,
       message: "Not found!",
@@ -83,10 +83,10 @@ const removeContact = async (req, res, next) => {
       return res.json({
         status: "success",
         code: 200,
-        message: `Contact with id <${contactToDelete.id}> deleted!`,
+        message: `Contact with id ${contactToDelete.id} deleted!`,
       });
     }
-    return res.json({
+    return res.status(404).json({
       status: "error",
       code: 404,
       message: "Not found!",
@@ -118,10 +118,10 @@ const updateContact = async (req, res, next) => {
       });
     }
 
-    return res.json({
+    return res.status(400).json({
       status: "error",
       code: 400,
-      message: "missing fields",
+      message: "Not found",
     });
   } catch (error) {
     next(error);
