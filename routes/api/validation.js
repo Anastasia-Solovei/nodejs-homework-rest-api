@@ -1,13 +1,16 @@
 const Joi = require("joi");
 
 const patternId = "\\w{8}-\\{4}-\\{4}-\\{4}-\\{12}";
-const patternPhone =
-  "^([0-9]{3})s*(?:[ ]s*)?([0-9]{3})s*(?:[.-]s*)?([0-9]{4})$";
+// const patternPhone =
+// "^([0-9]{3})s*(?:[ ]s*)?([0-9]{3})s*(?:[.-]s*)?([0-9]{4})$";
 
 const schemaContact = Joi.object({
   name: Joi.string().alphanum().min(1).max(20).required(),
   email: Joi.string().email().required(),
-  phone: Joi.string().pattern(new RegExp(patternPhone)).required(),
+  phone: Joi.string()
+    // .pattern(new RegExp(patternPhone))
+    .regex(/^[(][0-9]{3}[)][ ]{0,1}[0-9]{3}[-][0-9]{4}$/)
+    .required(),
 });
 
 const schemaId = Joi.object({
