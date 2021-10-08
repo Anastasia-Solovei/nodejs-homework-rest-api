@@ -31,7 +31,6 @@ const getContactById = async (req, res, next) => {
     const oid = new ObjectId(contactId);
     const [contact] = await collection.find({ _id: oid }).toArray();
 
-    // const [contact] = contacts.filter((contact) => contact.id === contactId);
     if (contact) {
       return res.json({
         status: "success",
@@ -79,18 +78,17 @@ const removeContact = async (req, res, next) => {
     const { contactId } = req.params;
     const collection = await getCollection(db, "contacts");
     const oid = new ObjectId(contactId);
-    const result = await collection.findOneAndDelete({ _id: oid });
+    const { value: result } = await collection.findOneAndDelete({ _id: oid });
 
-    if (result) {
-      return result;
-      //   return res.json({
-      //     status: "success",
-      //     code: 200,
-      //     // data: {
-      //     //   result,
-      //     // },
-      //     message: `Contact with id ${contactId} deleted!`,
-      //   });
+    if (result !== null) {
+      return res.json({
+        status: "success",
+        code: 200,
+        data: {
+          result,
+        },
+        message: `Contact deleted!`,
+      });
     }
 
     return res.status(404).json({
