@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const patternId = "\\w{8}-\\{4}-\\{4}-\\{4}-\\{12}";
+// const patternId = "\\w{8}-\\{4}-\\{4}-\\{4}-\\{12}";
 // const patternPhone =
 // "^([0-9]{3})s*(?:[ ]s*)?([0-9]{3})s*(?:[.-]s*)?([0-9]{4})$";
 
@@ -14,7 +14,9 @@ const schemaContact = Joi.object({
 });
 
 const schemaId = Joi.object({
-  id: Joi.string().pattern(new RegExp(patternId)).required(),
+  id: Joi.string()
+    // .pattern(new RegExp(patternId))
+    .required(),
 });
 
 const validate = async (schema, obj, res, next) => {
