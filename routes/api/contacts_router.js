@@ -5,23 +5,15 @@ const { validateContact, validateId } = require("./validation");
 
 router.get("/", contactsController.listContacts);
 
-router.get(
-  "/:contactId",
-  // validateId,
-  contactsController.getContactById
-);
+router.get("/:contactId", validateId, contactsController.getContactById);
 
 router.post("/", validateContact, contactsController.addContact);
 
-router.delete(
-  "/:contactId",
-  // validateId,
-  contactsController.removeContact
-);
+router.delete("/:contactId", validateId, contactsController.removeContact);
 
 router.put(
   "/:contactId",
-  // validateId,
+  validateId,
   validateContact,
   contactsController.updateContact
 );
