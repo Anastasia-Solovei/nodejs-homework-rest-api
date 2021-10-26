@@ -1,6 +1,5 @@
 const Joi = require("joi");
 
-// const patternId = "\\w{8}-\\{4}-\\{4}-\\{4}-\\{12}";
 // const patternPhone =
 // "^([0-9]{3})s*(?:[ ]s*)?([0-9]{3})s*(?:[.-]s*)?([0-9]{4})$";
 
@@ -14,21 +13,11 @@ const schemaContact = Joi.object({
 });
 
 const schemaId = Joi.object({
-  contactId: Joi.string()
-    // .pattern(new RegExp(patternId))
-    .required(),
+  contactId: Joi.string().required(),
 });
 
 const validate = async (schema, obj, res, next) => {
   try {
-    if (!obj.contactId) {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        message: "contact with entered id not found!",
-      });
-    }
-
     if (Object.keys(obj).length === 0) {
       return res.status(400).json({
         status: "error",
@@ -39,7 +28,6 @@ const validate = async (schema, obj, res, next) => {
     await schema.validateAsync(obj);
     next();
   } catch (err) {
-    console.log(err);
     res.status(400).json({
       status: "error",
       code: 400,
