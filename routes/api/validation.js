@@ -14,14 +14,14 @@ const schemaContact = Joi.object({
 });
 
 const schemaId = Joi.object({
-  id: Joi.string()
+  contactId: Joi.string()
     // .pattern(new RegExp(patternId))
     .required(),
 });
 
 const validate = async (schema, obj, res, next) => {
   try {
-    if (!obj.id) {
+    if (!obj.contactId) {
       return res.status(404).json({
         status: "error",
         code: 404,
