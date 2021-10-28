@@ -1,16 +1,16 @@
-const { ObjectId } = require("mongodb");
-const db = require("../model/db");
+// const Contact = require("../model/contact_schema");
+const {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
+  updateContact,
+  updateStatusContact,
+} = require("../repository/contacts");
 
-const getCollection = async (db, name) => {
-  const client = await db;
-  const collection = await client.db().collection(name);
-  return collection;
-};
-
-const listContacts = async (_req, res, next) => {
+const getContacts = async (_req, res, next) => {
   try {
-    const collection = await getCollection(db, "contacts");
-    const contacts = await collection.find({}).toArray();
+    const contacts = await listContacts();
 
     res.json({
       status: "success",
@@ -24,12 +24,12 @@ const listContacts = async (_req, res, next) => {
   }
 };
 
-const getContactById = async (req, res, next) => {
+const getById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const collection = await getCollection(db, "contacts");
-    const oid = new ObjectId(contactId);
-    const [contact] = await collection.find({ _id: oid }).toArray();
+    const contact = await getContactById(contactId);
+    console.log(contact);
+    console.log(contact.id);
 
     if (contact) {
       return res.json({
@@ -50,22 +50,16 @@ const getContactById = async (req, res, next) => {
   }
 };
 
-const addContact = async (req, res, next) => {
+const create = async (req, res, next) => {
   try {
     const body = req.body;
-    const newContact = {
-      favorite: false,
-      ...body,
-    };
-
-    const collection = await getCollection(db, "contacts");
-    await collection.insertOne(newContact);
+    const result = await addContact(body);
 
     res.json({
       status: "success",
       code: 201,
       data: {
-        newContact,
+        result,
       },
     });
   } catch (error) {
@@ -73,12 +67,10 @@ const addContact = async (req, res, next) => {
   }
 };
 
-const removeContact = async (req, res, next) => {
+const remove = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const collection = await getCollection(db, "contacts");
-    const oid = new ObjectId(contactId);
-    const { value: result } = await collection.findOneAndDelete({ _id: oid });
+    const result = await removeContact(contactId);
 
     if (result !== null) {
       return res.json({
@@ -101,17 +93,39 @@ const removeContact = async (req, res, next) => {
   }
 };
 
-const updateContact = async (req, res, next) => {
+const update = async (req, res, next) => {
   try {
     const body = req.body;
     const { contactId } = req.params;
-    const collection = await getCollection(db, "contacts");
-    const oid = new ObjectId(contactId);
-    const { value: result } = await collection.findOneAndUpdate(
-      { _id: oid },
-      { $set: body },
-      { returnDocument: "after" }
-    );
+
+    const result = await updateContact(contactId, body);
+
+    if (result) {
+      return res.json({
+        status: "success",
+        code: 200,
+        data: {
+          result,
+        },
+      });
+    }
+
+    return res.status(400).json({
+      status: "error",
+      code: 400,
+      message: "Not found",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateStatus = async (req, res, next) => {
+  try {
+    const body = req.body;
+    const { contactId } = req.params;
+
+    const result = await updateStatusContact(contactId, body);
 
     if (result) {
       return res.json({
@@ -134,9 +148,10 @@ const updateContact = async (req, res, next) => {
 };
 
 module.exports = {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
+  getContacts,
+  getById,
+  create,
+  remove,
+  update,
+  updateStatus,
 };
