@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-const { ValidContactName } = require("../config/constant");
+const { ValidContactName } = require("../config/constants");
 
 const contactSchema = new Schema(
   {
@@ -21,6 +21,10 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    // owner: {
+    //   type: SchemaTypes.ObjectId,
+    //   ref: "user",
+    // },
   },
   {
     versionKey: false,
