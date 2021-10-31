@@ -1,4 +1,3 @@
-// const Contact = require("../model/contact_schema");
 const {
   listContacts,
   getContactById,
