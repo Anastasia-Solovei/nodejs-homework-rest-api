@@ -1,7 +1,7 @@
 const User = require("../model/user_schema");
 
 const findById = async (id) => {
-  return await User.findById({ id });
+  return await User.findById(id);
 };
 
 const findByEmail = async (email) => {
