@@ -1,31 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const usersController = require("../../controllers/users_controller");
+const guard = require("../../helpers/guard");
+const { validateUser } = require("./validation");
 
-router.post("/signup", usersController.signup);
-// POST /users/signup
+router.post("/signup", validateUser, usersController.signup);
 
-// Content-Type: application/json
-// RequestBody: {
-//   "email": "example@example.com",
-//   "password": "examplepassword"
-// }
+router.post("/login", validateUser, usersController.login);
 
-router.post("/login", usersController.login);
-// POST /users/login
+router.post("/logout", guard, usersController.logout);
 
-// Content-Type: application/json
-// RequestBody: {
-//   "email": "example@example.com",
-//   "password": "examplepassword"
-// }
-
-router.post("/logout", usersController.logout);
-// POST / users / logout;
-
-// Authorization: "Bearer {{token}}";
-
-router.get("/current", usersController.current);
+router.get("/current", guard, usersController.current);
 // GET / users / current;
 
 // Authorization: "Bearer {{token}}";
