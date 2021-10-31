@@ -1,5 +1,10 @@
 const jwt = require("jsonwebtoken");
-const { findByEmail, create, updateToken } = require("../repository/users");
+const {
+  findById,
+  findByEmail,
+  create,
+  updateToken,
+} = require("../repository/users");
 const { HttpCode } = require("../config/constants");
 require("dotenv").config();
 const SERCRET_KEY = process.env.JWT_SECRET_KEY;
@@ -13,7 +18,7 @@ const signup = async (req, res, next) => {
       status: "error",
       code: HttpCode.CONFLICT,
       ResponseBody: {
-        message: "Email in use",
+        message: "Email is already in use",
       },
     });
   }
@@ -29,6 +34,7 @@ const signup = async (req, res, next) => {
           email: newUser.email,
           subscription: "starter",
         },
+        message: "Registration successful",
       },
     });
   } catch (e) {
@@ -50,6 +56,7 @@ const login = async (req, res, next) => {
       },
     });
   }
+
   const id = user._id;
   const payload = { id };
   const token = jwt.sign(payload, SERCRET_KEY, { expiresIn: "1h" });
@@ -70,7 +77,21 @@ const login = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
-  res.json();
+  const id = req.user._id;
+  const user = await findById(id);
+
+  if (!user) {
+    return res.status(HttpCode.UNAUTHORIZED).json({
+      status: "error",
+      code: HttpCode.UNAUTHORIZED,
+      ResponseBody: {
+        message: "Not authorized",
+      },
+    });
+  }
+
+  await updateToken(id, null);
+  return res.status(HttpCode.NO_CONTENT).json({});
 };
 
 const current = async (req, res, next) => {
