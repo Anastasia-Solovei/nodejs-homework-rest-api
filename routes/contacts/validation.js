@@ -1,6 +1,6 @@
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
-const { ValidContactName } = require("../../config/constant");
+const { ValidContactName } = require("../../config/constants");
 
 const schemaContact = Joi.object({
   name: Joi.string()
