@@ -30,7 +30,7 @@ const signup = async (req, res, next) => {
       code: HttpCode.CREATED,
       user: {
         email: newUser.email,
-        subscription: "starter",
+        subscription: newUser.subscription,
       },
       message: "Registration successful",
     });
@@ -64,7 +64,7 @@ const login = async (req, res, next) => {
     token,
     user: {
       email: `${user.email}`,
-      subscription: "starter",
+      subscription: `${user.subscription}`,
     },
   });
 };
@@ -102,7 +102,7 @@ const current = async (req, res, next) => {
     code: HttpCode.OK,
     user: {
       email: `${user.email}`,
-      subscription: "starter",
+      subscription: `${user.subscription}`,
     },
   });
 };
