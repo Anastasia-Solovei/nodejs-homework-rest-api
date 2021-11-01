@@ -4,6 +4,7 @@ const {
   findByEmail,
   create,
   updateToken,
+  updateUserSubscription,
 } = require("../repository/users");
 const { HttpCode } = require("../config/constants");
 require("dotenv").config();
@@ -17,9 +18,7 @@ const signup = async (req, res, next) => {
     res.status(HttpCode.CONFLICT).json({
       status: "error",
       code: HttpCode.CONFLICT,
-      ResponseBody: {
-        message: "Email is already in use",
-      },
+      message: "Email is already in use",
     });
   }
 
@@ -29,13 +28,11 @@ const signup = async (req, res, next) => {
     res.status(HttpCode.CREATED).json({
       status: "success",
       code: HttpCode.CREATED,
-      ResponseBody: {
-        user: {
-          email: newUser.email,
-          subscription: "starter",
-        },
-        message: "Registration successful",
+      user: {
+        email: newUser.email,
+        subscription: "starter",
       },
+      message: "Registration successful",
     });
   } catch (e) {
     next(e);
@@ -51,9 +48,7 @@ const login = async (req, res, next) => {
     return res.status(HttpCode.UNAUTHORIZED).json({
       status: "error",
       code: HttpCode.UNAUTHORIZED,
-      ResponseBody: {
-        message: "Email or password is wrong",
-      },
+      message: "Email or password is wrong",
     });
   }
 
@@ -66,12 +61,10 @@ const login = async (req, res, next) => {
   return res.status(HttpCode.OK).json({
     status: "success",
     code: HttpCode.OK,
-    ResponseBody: {
-      token,
-      user: {
-        email: `${user.email}`,
-        subscription: "starter",
-      },
+    token,
+    user: {
+      email: `${user.email}`,
+      subscription: "starter",
     },
   });
 };
@@ -84,9 +77,7 @@ const logout = async (req, res, next) => {
     return res.status(HttpCode.UNAUTHORIZED).json({
       status: "error",
       code: HttpCode.UNAUTHORIZED,
-      ResponseBody: {
-        message: "Not authorized",
-      },
+      message: "Not authorized",
     });
   }
 
@@ -95,7 +86,49 @@ const logout = async (req, res, next) => {
 };
 
 const current = async (req, res, next) => {
-  res.json();
+  const id = req.user._id;
+  const user = await findById(id);
+
+  if (!user) {
+    return res.status(HttpCode.UNAUTHORIZED).json({
+      status: "error",
+      code: HttpCode.UNAUTHORIZED,
+      message: "Not authorized",
+    });
+  }
+
+  return res.status(HttpCode.OK).json({
+    status: "success",
+    code: HttpCode.OK,
+    user: {
+      email: `${user.email}`,
+      subscription: "starter",
+    },
+  });
+};
+
+const updateSubscription = async (req, res, next) => {
+  const id = req.user._id;
+  const body = req.body;
+  const user = await findById(id);
+  const result = await updateUserSubscription(id, body);
+
+  if (!result) {
+    return res.status(HttpCode.UNAUTHORIZED).json({
+      status: "error",
+      code: HttpCode.UNAUTHORIZED,
+      message: "Not authorized",
+    });
+  }
+
+  return res.status(HttpCode.OK).json({
+    status: "success",
+    code: HttpCode.OK,
+    user: {
+      email: `${user.email}`,
+      subscription: `${result.subscription}`,
+    },
+  });
 };
 
 module.exports = {
@@ -103,4 +136,5 @@ module.exports = {
   login,
   logout,
   current,
+  updateSubscription,
 };
