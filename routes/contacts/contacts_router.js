@@ -7,21 +7,32 @@ const {
   validateStatusContact,
 } = require("./validation");
 const guard = require("../../helpers/guard");
+const wrapError = require("../../helpers/error_handler");
 
-router.get("/", guard, contactsController.getContacts);
+router.get("/", guard, wrapError(contactsController.getContacts));
 
-router.get("/:contactId", guard, validateId, contactsController.getById);
+router.get(
+  "/:contactId",
+  guard,
+  validateId,
+  wrapError(contactsController.getById)
+);
 
-router.post("/", guard, validateContact, contactsController.create);
+router.post("/", guard, validateContact, wrapError(contactsController.create));
 
-router.delete("/:contactId", guard, validateId, contactsController.remove);
+router.delete(
+  "/:contactId",
+  guard,
+  validateId,
+  wrapError(contactsController.remove)
+);
 
 router.put(
   "/:contactId",
   guard,
   validateId,
   validateContact,
-  contactsController.update
+  wrapError(contactsController.update)
 );
 
 router.patch(
@@ -29,7 +40,7 @@ router.patch(
   guard,
   validateId,
   validateStatusContact,
-  contactsController.updateStatus
+  wrapError(contactsController.updateStatus)
 );
 
 module.exports = router;
