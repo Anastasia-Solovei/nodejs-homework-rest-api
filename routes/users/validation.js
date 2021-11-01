@@ -1,11 +1,14 @@
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
-// const { ValidContactName } = require("../../config/constants");
 const { HttpCode } = require("../../config/constants");
 
 const schemaUser = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
+});
+
+const schemaStatus = Joi.object({
+  subscription: Joi.string().valid("starter", "pro", "business").required(),
 });
 
 const validate = async (schema, obj, res, next) => {
@@ -30,4 +33,8 @@ const validate = async (schema, obj, res, next) => {
 
 module.exports.validateUser = async (req, res, next) => {
   return await validate(schemaUser, req.body, res, next);
+};
+
+module.exports.validateSubscriptionStatus = async (req, res, next) => {
+  return await validate(schemaStatus, req.body, res, next);
 };
