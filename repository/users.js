@@ -26,9 +26,19 @@ const updateUserSubscription = async (id, body) => {
   return result;
 };
 
+// implementation local storage of avatars
 const updateAvatar = async (id, avatar) => {
   return await User.updateOne({ _id: id }, { avatarURL: avatar });
 };
+
+// implementation cloud storage of avatars
+// const updateAvatar = async (id, avatar, idUserCloud) => {
+//   return await User.updateOne(
+//     { _id: id },
+//     { avatarURL: avatar },
+//     { idUserCloud }
+//   );
+// };
 
 module.exports = {
   findById,

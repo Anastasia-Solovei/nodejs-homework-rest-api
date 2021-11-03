@@ -1,3 +1,4 @@
+// implementation local storage of avatars
 const Jimp = require("jimp");
 const fs = require("fs/promises");
 const path = require("path");
