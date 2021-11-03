@@ -1,11 +1,15 @@
 const jwt = require("jsonwebtoken");
+const path = require("path");
+const mkdirp = require("mkdirp");
 const {
   findById,
   findByEmail,
   create,
   updateToken,
   updateUserSubscription,
+  updateAvatar,
 } = require("../repository/users");
+const UploadService = require("../services/file-upload");
 const { HttpCode } = require("../config/constants");
 require("dotenv").config();
 const SERCRET_KEY = process.env.JWT_SECRET_KEY;
@@ -31,6 +35,7 @@ const signup = async (req, res, next) => {
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarURL: newUser.avatarURL,
       },
       message: "Registration successful",
     });
@@ -131,10 +136,40 @@ const updateSubscription = async (req, res, next) => {
   });
 };
 
+const uploadAvatar = async (req, res, next) => {
+  const id = String(req.user._id);
+  const file = req.file;
+
+  const PUBLIC_AVATARS = process.env.PUBLIC_AVATARS;
+  const destination = path.join(PUBLIC_AVATARS, id);
+  await mkdirp(destination);
+
+  const uploadService = new UploadService(destination);
+  const avatarURL = await uploadService.save(file, id);
+  await updateAvatar(id, avatarURL);
+
+  if (!avatarURL) {
+    return res.status(HttpCode.UNAUTHORIZED).json({
+      status: "error",
+      code: HttpCode.UNAUTHORIZED,
+      message: "Not authorized",
+    });
+  }
+
+  return res.status(200).json({
+    status: "success",
+    code: HttpCode.OK,
+    user: {
+      avatarURL,
+    },
+  });
+};
+
 module.exports = {
   signup,
   login,
   logout,
   current,
   updateSubscription,
+  uploadAvatar,
 };
