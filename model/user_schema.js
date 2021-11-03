@@ -27,7 +27,7 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
-    avatar: {
+    avatarURL: {
       type: String,
       default: function () {
         return gravatar.url(this.email, { s: "250" }, true);
