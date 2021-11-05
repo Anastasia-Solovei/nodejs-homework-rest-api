@@ -34,10 +34,10 @@ const userSchema = new Schema(
       },
     },
     // implementation cloud storage of avatars
-    // idUserCloud: {
-    //   type: String,
-    //   default: null,
-    // },
+    idUserCloud: {
+      type: String,
+      default: null,
+    },
   },
   {
     versionKey: false,

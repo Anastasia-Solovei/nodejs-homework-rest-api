@@ -82,7 +82,6 @@ const update = async (req, res) => {
   const { contactId } = req.params;
 
   const contact = await Contacts.updateContact(contactId, body, userId);
-  console.log(contact);
 
   if (contact) {
     return res.status(HttpCode.OK).json({

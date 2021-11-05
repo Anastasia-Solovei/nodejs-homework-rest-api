@@ -15,9 +15,9 @@ const wrapper = (fn) => async (req, res, next) => {
         break;
 
       case "CustomError":
-        res.status(HttpCode.BAD_REQUEST).json({
+        res.status(err.status).json({
           status: "error",
-          code: HttpCode.BAD_REQUEST,
+          code: err.status,
           message: err.message,
         });
         break;

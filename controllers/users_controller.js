@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 // implementation local storage of avatars
-const path = require("path");
-const mkdirp = require("mkdirp");
+// const path = require("path");
+// const mkdirp = require("mkdirp");
 // implementation cloud storage of avatars
-// const fs = require("fs/promises");
+const fs = require("fs/promises");
 const {
   findById,
   findByEmail,
@@ -13,9 +13,9 @@ const {
   updateAvatar,
 } = require("../repository/users");
 // implementation local storage of avatars
-const UploadService = require("../services/file-upload");
+// const UploadService = require("../services/file-upload");
 // implementation cloud storage of avatars
-// const CloudUploadService = require("../services/cloud-upload");
+const CloudUploadService = require("../services/cloud-upload");
 const { HttpCode } = require("../config/constants");
 require("dotenv").config();
 const SERCRET_KEY = process.env.JWT_SECRET_KEY;
@@ -54,6 +54,7 @@ const login = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await findByEmail(email);
   const isValidPassword = await user?.isValidPassword(password);
+  console.log(isValidPassword);
 
   if (!user || !isValidPassword) {
     return res.status(HttpCode.UNAUTHORIZED).json({
@@ -143,53 +144,17 @@ const updateSubscription = async (req, res, next) => {
 };
 
 // implementation local storage of avatars
-const uploadAvatar = async (req, res, next) => {
-  const id = String(req.user._id);
-  const file = req.file;
-
-  const PUBLIC_AVATARS = process.env.PUBLIC_AVATARS;
-  const destination = path.join(PUBLIC_AVATARS, id);
-  await mkdirp(destination);
-
-  const uploadService = new UploadService(destination);
-  const avatarURL = await uploadService.save(file, id);
-  await updateAvatar(id, avatarURL);
-
-  if (!avatarURL) {
-    return res.status(HttpCode.UNAUTHORIZED).json({
-      status: "error",
-      code: HttpCode.UNAUTHORIZED,
-      message: "Not authorized",
-    });
-  }
-
-  return res.status(200).json({
-    status: "success",
-    code: HttpCode.OK,
-    user: {
-      avatarURL,
-    },
-  });
-};
-
-// implementation cloud storage of avatars
 // const uploadAvatar = async (req, res, next) => {
-//   const { id, idUserCloud } = req.user;
+//   const id = String(req.user._id);
 //   const file = req.file;
 
-//   const destination = "avatars";
-//   const uploadService = new CloudUploadService(destination);
-//   const { avatarURL, updatedIdUserCloud } = await uploadService.save(
-//     file.path,
-//     idUserCloud
-//   );
-//   await updateAvatar(id, avatarURL, updatedIdUserCloud);
+//   const PUBLIC_AVATARS = process.env.PUBLIC_AVATARS;
+//   const destination = path.join(PUBLIC_AVATARS, id);
+//   await mkdirp(destination);
 
-//   try {
-//     await fs.unlink(file.path);
-//   } catch (err) {
-//     console.log(err.message);
-//   }
+//   const uploadService = new UploadService(destination);
+//   const avatarURL = await uploadService.save(file, id);
+//   await updateAvatar(id, avatarURL);
 
 //   if (!avatarURL) {
 //     return res.status(HttpCode.UNAUTHORIZED).json({
@@ -207,6 +172,42 @@ const uploadAvatar = async (req, res, next) => {
 //     },
 //   });
 // };
+
+// implementation cloud storage of avatars
+const uploadAvatar = async (req, res, next) => {
+  const { id, idUserCloud } = req.user;
+  const file = req.file;
+
+  const destination = "avatars";
+  const uploadService = new CloudUploadService(destination);
+  const { avatarURL, updatedIdUserCloud } = await uploadService.save(
+    file.path,
+    idUserCloud
+  );
+  await updateAvatar(id, avatarURL, updatedIdUserCloud);
+
+  try {
+    await fs.unlink(file.path);
+  } catch (err) {
+    console.log(err.message);
+  }
+
+  if (!avatarURL) {
+    return res.status(HttpCode.UNAUTHORIZED).json({
+      status: "error",
+      code: HttpCode.UNAUTHORIZED,
+      message: "Not authorized",
+    });
+  }
+
+  return res.status(200).json({
+    status: "success",
+    code: HttpCode.OK,
+    user: {
+      avatarURL,
+    },
+  });
+};
 
 module.exports = {
   signup,

@@ -3,7 +3,7 @@ const passport = require("passport");
 const { HttpCode } = require("../config/constants");
 const { Strategy } = require("passport-jwt");
 
-describe("Unit test guard heler", () => {
+describe("Unit test guard helper", () => {
   const user = { token: "111222333" };
   let req, res, next;
 
