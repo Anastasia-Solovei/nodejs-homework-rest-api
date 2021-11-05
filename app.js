@@ -1,25 +1,39 @@
-const express = require('express')
-const logger = require('morgan')
-const cors = require('cors')
+const express = require("express");
+const logger = require("morgan");
+const cors = require("cors");
+const boolParser = require("express-query-boolean");
+const helmet = require("helmet");
+require("dotenv").config();
+const PUBLIC_AVATARS = process.env.PUBLIC_AVATARS;
 
-const contactsRouter = require('./routes/api/contacts')
+const contactsRouter = require("./routes/contacts/contacts_router");
+const usersRouter = require("./routes/users/users_router");
 
-const app = express()
+const app = express();
 
-const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
+const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
-app.use(logger(formatsLogger))
-app.use(cors())
-app.use(express.json())
+app.use(express.static(PUBLIC_AVATARS));
+app.use(helmet());
+app.get("env") !== "test" && app.use(logger(formatsLogger));
+app.use(cors());
+app.use(express.json({ limit: 10000 }));
+app.use(boolParser());
 
-app.use('/api/contacts', contactsRouter)
+app.use("/api/users", usersRouter);
+app.use("/api/contacts", contactsRouter);
 
-app.use((req, res) => {
-  res.status(404).json({ message: 'Not found' })
-})
+app.use((_req, res) => {
+  res.status(404).json({ status: "error", code: 404, message: "Not found" });
+});
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message })
-})
+  const statusCode = err.status || 500;
+  res.status(statusCode).json({
+    status: statusCode === 500 ? "fail" : "error",
+    code: statusCode,
+    message: err.message,
+  });
+});
 
-module.exports = app
+module.exports = app;
