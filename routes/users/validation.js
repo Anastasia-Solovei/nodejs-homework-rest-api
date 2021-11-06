@@ -11,6 +11,10 @@ const schemaStatus = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business").required(),
 });
 
+const schemaEmail = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 const validate = async (schema, obj, res, next) => {
   try {
     if (Object.keys(obj).length === 0) {
@@ -37,4 +41,8 @@ module.exports.validateUser = async (req, res, next) => {
 
 module.exports.validateSubscriptionStatus = async (req, res, next) => {
   return await validate(schemaStatus, req.body, res, next);
+};
+
+module.exports.validateEmail = async (req, res, next) => {
+  return await validate(schemaEmail, req.body, res, next);
 };
